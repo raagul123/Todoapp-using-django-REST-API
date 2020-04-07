@@ -1,5 +1,5 @@
-## Todoapp-using-django-REST-API
-
+## Todoapp using django REST-API and Vue.Js
+ 
 This app is created using **Django(REST API)** and **Vue.js(FrontEnd Framework)**.
 
 This app helps people be regular and make a note of things they must do.
