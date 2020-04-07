@@ -1,0 +1,272 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>ToDo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- bootstap -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- boostrap css -->
+    <link type="text/css" rel="stylesheet" href="{% static 'styles.css' %}">
+
+</head>
+
+<body class="" style="background-color: #9d85e0bd">
+    <p class="test"></p>
+    <div id="starting">
+        <div class="loading" v-if="loading===true">Loading&#8230;</div>
+
+        <div v-if="login !== true">
+            <div class="container">
+                <div class="row head1">
+                    <div class="container head2">
+                        <div class="container">
+                            <h1 style="font-family: cursive;">Your ToDo's List!
+                            </h1>
+                        </div>
+                        <br><br>
+
+
+
+                        <div class="searchbar container">
+                            <input class="searchbar1" type="text" placeholder="Search" v-model="search_term" aria-label="Search"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button class="btn btn-success" v-on:click.prevent="getArticles()">Search</button>
+                            <br><br>
+                        </div>
+                    </div>
+                    <br><br><br><br><br><br>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <!-- <th scope="col">#</th> -->
+                                <th scope="col">Title</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="article in articles">
+                                <!-- <th scope="row">${article.id}</th> -->
+                                <td>${article.todo}</td>
+                                <td>
+                                    <button class="btn btn-info" v-on:click="getArticle(article.id)">Edit</button>
+                                    <button class="btn btn-danger" v-on:click="deleteArticle(article.id)">Delete</button>
+                                </td>
+
+                                <br>
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+                    <div class="modal fade" id="addArticleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle" style="color: black;">Add To List</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      </button>
+                                </div>
+                                <form>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" id="todo_title" placeholder="What you want to do?" v-model="newArticle.todo" required="required">
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary" v-on:click.prevent="addArticle()" data-dismiss="modal">ADD</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="loading" v-if="loading===true">Loading&#8230;</div>
+
+                    </div>
+
+                    <div class="modal fade" id="editArticleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle" style="color: black;">EDIT</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      </button>
+                                </div>
+                                <form>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" id="todo_title" placeholder="Enter the heading" v-model="currentArticle.todo" required="required">
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary m-progress" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary" v-on:click.prevent="updateArticle()" data-dismiss="modal">Save changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="loading" v-if="loading===true">Loading&#8230;</div>
+
+                    </div>
+                    <div class="container">
+                        <br>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addArticleModal">Add To List</button>
+                    </div>
+                    <div class="loading" v-if="loading===true">Loading&#8230;</div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary logoutcss" v-on:click="logout()">Logout</button>
+
+        </div>
+
+
+        <div class="loading" v-if="loading===true">Loading&#8230;</div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.5"></script>
+    <script type="text/javascript">
+        Vue.http.headers.common['Authorization'] = 'Token ' + localStorage.getItem('token');
+        new Vue({
+            el: '#starting',
+            delimiters: ['${', '}'],
+            data: {
+                loading: true,
+
+                articles: [],
+                currentArticle: {},
+                message: null,
+                newArticle: {
+                    todo: null,
+                },
+                login: false,
+                search_term: '',
+            },
+            mounted: function() {
+                this.loading = true;
+
+                if (localStorage.getItem('token') !== null) {
+                    login = true
+                    this.loading = true;
+                    this.getArticles();
+                    this.loading = true;
+
+
+                } else {
+                    login = false;
+                    console.log('login');
+                    window.location.href = '/login'
+
+                }
+
+            },
+            methods: {
+                loginpage: function() {
+                    window.location.href = '/login'
+                },
+                logout: function() {
+                    localStorage.removeItem('token');
+                    login = false;
+                    location.reload();
+                },
+                getArticles: function() {
+                    let api_url = '/api/todo/';
+                    if (this.search_term !== '' || this.search_term !== null) {
+                        api_url = `/api/todo/?search=${this.search_term}`
+
+                    }
+                    this.loading = true;
+                    this.$http.get(api_url)
+                        .then((response) => {
+                            this.articles = response.data;
+                            // console.log(response.data)
+                            this.loading = false;
+
+
+                        })
+                        .catch((err) => {
+                            this.loading = false;
+
+                            console.log(err);
+                        })
+                },
+                getArticle: function(id) {
+                    this.loading = true;
+
+                    this.$http.get(`/api/todo/${id}/`)
+                        .then((response) => {
+                            this.currentArticle = response.data;
+                            $("#editArticleModal").modal('show');
+                            this.loading = false;
+
+                        })
+                        .catch((err) => {
+                            this.loading = false;
+
+                            console.log(err);
+                        })
+                },
+                addArticle: function() {
+                    this.loading = true;
+
+                    this.$http.post('/api/todo/', this.newArticle)
+                        .then((response) => {
+                            // console.log(response.data)
+                            this.loading = true;
+
+                            this.getArticles();
+                        })
+                        .catch((err) => {
+                            this.loading = true;
+
+                            console.log(err);
+                        })
+                },
+                updateArticle: function() {
+                    this.loading = true;
+
+                    this.$http.put(`/api/todo/${this.currentArticle.id}/`, this.currentArticle)
+                        .then((response) => {
+                            this.loading = false;
+                            this.currentArticle = response.data;
+                            this.getArticles();
+                        })
+                        .catch((err) => {
+                            this.loading = false;
+
+                            console.log(err);
+                        })
+                },
+                deleteArticle: function(id) {
+                    this.loading = true;
+
+                    this.$http.delete(`/api/todo/${id}/`)
+                        .then((response) => {
+                            this.loading = false;
+
+                            this.getArticles();
+                        })
+                        .catch((err) => {
+                            this.loading = false;
+
+                            console.log(err);
+                        })
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignUp</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- boostrap css -->
+    <link type="text/css" rel="stylesheet" href="{% static 'styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.5"></script>
+</head>
+
+<body style="background-color: #9d85e0bd">
+    <br>
+    <div id="app">
+        <div class="container " id="addArticleModal" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div>
+                <br><br><br>
+                <div>
+                    <div class="logintitle">
+                        <h1 id="exampleModalLongTitle" style="color: black; font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Signup!</h5>
+                    </div>
+
+                    <div class="formcss extraformcss">
+                        <form v-on:submit.prevent="addArticle()" class="justify-content-center">
+                            <img src="https://img.icons8.com/clouds/2x/paper-plane.png" class="img" alt="signup">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <input type="text" style="text-align: center;" class="form-control" id="todo_title" placeholder="Username" v-model="newArticle.username" required="required">
+                                </div>
+                                <div v-if="useralreadypresent">
+                                    <p style="color: white;">Username is already taken!</p>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" style="text-align: center;" class="form-control" id="todo_title" placeholder="Name" v-model="newArticle.name" required="required">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" style="text-align: center;" class="form-control" id="todo_title" placeholder="Password" v-model="newArticle.password" required="required">
+                                </div>
+                            </div>
+                            <div class="submitbutton">
+                                <button type="submit" class="btn btn-primary">Register</button>
+                            </div>
+                        </form>
+                        <div class="loading" v-if="loading===true">Loading&#8230;</div>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <br>
+            <a class="loginlink" v-on:click='loginpage()'>
+                <p class="submitbutton reglink">Already have an account?</p>
+            </a>
+
+            <div class="loading" v-if="loading===true">Loading&#8230;</div>
+
+        </div>
+        <div class="loading" v-if="loading===true">Loading&#8230;</div>
+    </div>
+    <script type="text/javascript">
+        Vue.http.headers.common['X-CSRFToken'] = "{{ csrf_token }}";
+
+        new Vue({
+            el: '#app',
+            delimiters: ['${', '}'],
+            data: {
+                loading: false,
+                articles: [],
+                currentArticle: {},
+                message: null,
+                newArticle: {
+                    'username': null,
+                    'name': null,
+                    'password': null
+                },
+                search_term: '',
+                useralreadypresent: false,
+            },
+
+            methods: {
+                loginpage: function() {
+                    window.location.href = '/login'
+                },
+                getArticles: function() {
+                    let api_url = '/api/profile/';
+
+
+                    this.$http.get(api_url)
+                        .then((response) => {
+                            this.articles = response.data;
+                            window.location.href = '/login/'
+
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        })
+                },
+
+                addArticle: function() {
+                    localStorage.removeItem('token')
+                    this.$http.post('/api/profile/', this.newArticle)
+                        .then((response) => {
+                            this.getArticles();
+                        })
+                        .catch(err => {
+                            this.useralreadypresent = true;
+                            console.log(err);
+                        })
+                },
+            }
+        });
+    </script>
+</body>
+
+</html>
