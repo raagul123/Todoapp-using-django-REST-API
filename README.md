@@ -1,4 +1,4 @@
-## ToDo App
+## Todoapp-using-django-REST-API
 
 This app is created using **Django(REST API)** and **Vue.js(FrontEnd Framework)**.
 
@@ -12,12 +12,12 @@ Here people can Create , Edit , Delete , View the list of works they have added.
 
 ## SignUp
 
-![Signup](https://bitbucket.org/raagul3700/todo-django/raw/8ea5eac65eabfc7c719c56a7242142bddf71e679/screenshots/Signup.PNG)
+![Signup](https://github.com/raagul123/Todoapp-using-django-REST-API/blob/master/screenshots/Signup.PNG)
 
 ## Login
 
-![Login](https://bitbucket.org/raagul3700/todo-django/raw/8ea5eac65eabfc7c719c56a7242142bddf71e679/screenshots/login.PNG)
+![Login](https://github.com/raagul123/Todoapp-using-django-REST-API/blob/master/screenshots/login.PNG)
 
 ## HomePage
 
-![Home](https://bitbucket.org/raagul3700/todo-django/raw/8ea5eac65eabfc7c719c56a7242142bddf71e679/screenshots/Home.PNG)# Todoapp-using-django-REST-API
+![Home](https://github.com/raagul123/Todoapp-using-django-REST-API/blob/master/screenshots/Home.PNG)
